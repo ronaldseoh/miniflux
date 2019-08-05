@@ -118,11 +118,9 @@ clean-integration-test:
 	@ psql -U postgres -c 'drop database if exists miniflux_test;'
 
 docker-images:
-	for arch in amd64 arm32v6 arm64v8; do \
+	for arch in amd64; do \
 	  case $${arch} in \
 		amd64   ) miniflux_arch="amd64";; \
-		arm32v6 ) miniflux_arch="armv6";; \
-		arm64v8 ) miniflux_arch="armv8";; \
 	  esac ;\
 	  cp Dockerfile Dockerfile.$${arch} && \
 	  sed -i"" -e "s|__BASEIMAGE_ARCH__|$${arch}|g" Dockerfile.$${arch} && \
@@ -139,12 +137,6 @@ docker-manifest:
 		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
 		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
-			$(DOCKER_IMAGE):amd64-$${version} \
-			$(DOCKER_IMAGE):arm32v6-$${version} \
-			$(DOCKER_IMAGE):arm64v8-$${version} && \
-		docker manifest annotate $(DOCKER_IMAGE):$${version} \
-			$(DOCKER_IMAGE):arm32v6-$${version} --os linux --arch arm --variant v6 && \
-		docker manifest annotate $(DOCKER_IMAGE):$${version} \
-			$(DOCKER_IMAGE):arm64v8-$${version} --os linux --arch arm64 --variant v8 && \
+			$(DOCKER_IMAGE):amd64-$${version} && \
 		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\
 	done
