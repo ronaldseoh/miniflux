@@ -134,8 +134,6 @@ docker-images:
 docker-manifest:
 	for version in $(VERSION) latest; do \
 		docker push $(DOCKER_IMAGE):amd64-$${version} && \
-		docker push $(DOCKER_IMAGE):arm32v6-$${version} && \
-		docker push $(DOCKER_IMAGE):arm64v8-$${version} && \
 		docker manifest create --amend $(DOCKER_IMAGE):$${version} \
 			$(DOCKER_IMAGE):amd64-$${version} && \
 		docker manifest push --purge $(DOCKER_IMAGE):$${version} ;\
